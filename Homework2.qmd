@@ -1,13 +1,14 @@
 ---
 title: "Programming in Base R"
 author: Matthew Corne
+date: 09/04/24
 format: html
 editor: visual
 ---
 
 ## Task 1: Basic Vector practice
 
-Consider the following pre-treatment and post-treatment blood pressure values, respectively, for patients 1 through 20.
+Consider the following pre-treatment and post-treatment blood pressure values, respectively, for patients 1 through 20.  Identify pre- and post-treatment measurements with indexed subjects.  Calculate the change and average decrease in blood pressure of all the patients.  Subset the difference vector to contain only those patients who experienced a decrease in blood pressure following treatment.  Finally, compute the average decrease in their blood pressure.
 
 ```{r}
 # Although this is step 2, putting here so that assignment can be used instead of having "paste..." twice
@@ -32,24 +33,28 @@ avg_dec_bp
 
 # Determine which patients experienced a decrease in blood pressure after treatment (positive change).
 pos_diff_bp_ind <- which(diff_bp > 0) # Gives index/which patient
+#pos_diff_bp_ind
 
 # Subset the vector of differences to return only those with positive change
 pos_diff_bp <- diff_bp[pos_diff_bp_ind]
+pos_diff_bp
 
 # Calculate the average decrease in blood pressure for those whose blood pressure decreased
 avg_dec_pos_diff_bp <- mean(pos_diff_bp)
+avg_dec_pos_diff_bp
 ```
 
 ## Task 2: Basic Data Frame practice
 
-Make a treatment data frame:
+Make a treatment data frame based on the treatment vectors from Task 1.  Subset this data frame to obtain those patients who experienced an increase in blood pressure following treatment.  In the original treatment data frame, construct a column with a logical value of "TRUE" if the post-treatment blood pressure is less than the pre-treatment blood pressure and "FALSE" otherwise.  Print out the data frame (with the additional column) neatly.
 
 ```{r}
 # Use row.names = NULL since the instructions above attached the patient names to the vectors, which propagates to the data frame, but want numeric row indices
 treatment <- data.frame(patient, pre_bp, post_bp, diff_bp, row.names = NULL)
 
 # Print out only the rows of the data frame when diff_bp < 0
-treatment <- subset(treatment, diff_bp < 0, drop = FALSE)
+treatment_increased_bp <- subset(treatment, diff_bp < 0, drop = FALSE)
+treatment_increased_bp
 
 # Assign a column with a logical value "TRUE" if diff_bp < 0 and "FALSE" otherwise
 treatment$nonhypertensive <- ifelse(treatment$post_bp < 120, TRUE, FALSE)
@@ -60,7 +65,7 @@ knitr::kable(treatment)
 
 ## Task 3:  List practice
 
-Make a placebo data frame, then put the treatment and placebo data frames into a list:
+Make a placebo data frame, following the steps in Task 2 (other than no need to account for the patients with increased post-treatment blood pressure).  Then put the treatment and placebo data frames into a list.  From within the list, access the treatment data frame from within the list, then access the pre-treatment blood pressure column from the placebo data frame.
 
 ```{r}
 # Prepare the vectors/columns
