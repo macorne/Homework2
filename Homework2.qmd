@@ -1,0 +1,87 @@
+---
+title: "Programming in Base R"
+author: Matthew Corne
+format: html
+editor: visual
+---
+
+## Task 1: Basic Vector practice
+
+Consider the following pre-treatment and post-treatment blood pressure values, respectively, for patients 1 through 20.
+
+```{r}
+# Although this is step 2, putting here so that assignment can be used instead of having "paste..." twice
+patient <- paste("Subject", 1:20, sep = "_")
+
+# Create vectors for pre- and post-treatment (hopefully systolic!) blood pressure measurements
+pre_bp <- c(120, 151, 125, 126, 115, 132, 132, 129, 134, 139, 127, 122, 127, 135, 133, 128, 147, 138, 140, 132)
+names(pre_bp) <- patient
+pre_bp
+
+post_bp <- c(127, 145, 135, 122, 115, 122, 123, 126, 126, 129, 132, 146, 120, 114, 121, 120, 128, 120, 133, 115)
+names(post_bp) <- patient
+post_bp
+
+# Calculate the change in blood pressure for each patient by subtracting post-treatment measurements from pre-treatment measurements.
+diff_bp <- pre_bp - post_bp
+diff_bp
+
+# Calculate the average decrease in blood pressure across all patients.
+avg_dec_bp <- mean(diff_bp)
+avg_dec_bp
+
+# Determine which patients experienced a decrease in blood pressure after treatment (positive change).
+pos_diff_bp_ind <- which(diff_bp > 0) # Gives index/which patient
+
+# Subset the vector of differences to return only those with positive change
+pos_diff_bp <- diff_bp[pos_diff_bp_ind]
+
+# Calculate the average decrease in blood pressure for those whose blood pressure decreased
+avg_dec_pos_diff_bp <- mean(pos_diff_bp)
+```
+
+## Task 2: Basic Data Frame practice
+
+Make a treatment data frame:
+
+```{r}
+# Use row.names = NULL since the instructions above attached the patient names to the vectors, which propagates to the data frame, but want numeric row indices
+treatment <- data.frame(patient, pre_bp, post_bp, diff_bp, row.names = NULL)
+
+# Print out only the rows of the data frame when diff_bp < 0
+treatment <- subset(treatment, diff_bp < 0, drop = FALSE)
+
+# Assign a column with a logical value "TRUE" if diff_bp < 0 and "FALSE" otherwise
+treatment$nonhypertensive <- ifelse(treatment$post_bp < 120, TRUE, FALSE)
+
+# Print the data frame out nicely in the final document
+knitr::kable(treatment)
+```
+
+## Task 3:  List practice
+
+Make a placebo data frame, then put the treatment and placebo data frames into a list:
+
+```{r}
+# Prepare the vectors/columns
+patient <- paste("Subject", 1:10, sep = "_")
+pre_bp <- c(138, 135, 147, 117, 152, 134, 114, 121, 131, 130)
+post_bp <- c(105, 136, 123, 130, 134, 143, 135, 139, 120, 124)
+diff_bp <- pre_bp - post_bp
+
+# Construct the data frame (list of vectors)
+placebo <- data.frame(patient, pre_bp, post_bp, diff_bp)
+
+# Assign logical column for the post_bp < 120 (TRUE) or otherwise (FALSE)
+placebo$nonhypertensive <- ifelse(placebo$post_bp < 120, TRUE, FALSE)
+
+# Make a list of the treatment (list item 1) and placebo (list item 2) data frames
+tp_list <- list(treatment, placebo)
+
+# Make a list of three different ways to access the treatment column in the list
+list(tp_list[1], tp_list[[1]], tp_list[[-2]])
+
+# Access the pre_bp column of the placebo data frame in the list
+tp_list[[2]][2]
+```
+
